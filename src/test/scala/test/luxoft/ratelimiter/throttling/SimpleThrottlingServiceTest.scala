@@ -34,8 +34,8 @@ class SimpleThrottlingServiceTest
   "unauthorized user" should "be throttled by (the same) unauthorized user counter" in {
 
     permFactory expects graceRps returning unauthPerms once()
-    (unauthPerms.take: () => Boolean) expects() returning true once()
-    (unauthPerms.take: () => Boolean) expects() returning false once()
+    unauthPerms.take _ expects() returning true once()
+    unauthPerms.take _ expects() returning false once()
 
     implicit val execCtx: ExecutionContext = mock[ExecutionContext]
     val ts = new SimpleThrottlingService(graceRps, slaService, permFactory)
@@ -47,8 +47,8 @@ class SimpleThrottlingServiceTest
   "authorized user" should "be throttled by (the same) unauthorized user counter until their SLA is obtained" in {
 
     permFactory expects graceRps returning unauthPerms once()
-    (unauthPerms.take: () => Boolean) expects() returning true once()
-    (unauthPerms.take: () => Boolean) expects() returning false once()
+    unauthPerms.take _ expects() returning true once()
+    unauthPerms.take _ expects() returning false once()
 
     slaService.getSlaByToken _ expects userToken returning Future.never once()
 
@@ -63,8 +63,8 @@ class SimpleThrottlingServiceTest
 
     permFactory expects graceRps returning unauthPerms once()
     permFactory expects userRps returning authPerms once()
-    (authPerms.take: () => Boolean) expects() returning true once()
-    (authPerms.take: () => Boolean) expects() returning false once()
+    authPerms.take _ expects() returning true once()
+    authPerms.take _ expects() returning false once()
 
     slaService.getSlaByToken _ expects userToken returning Future.successful(Sla(user, userRps)) once()
 
@@ -80,8 +80,8 @@ class SimpleThrottlingServiceTest
   "SLA service running for a token" should "not be called again" in {
 
     permFactory expects graceRps returning unauthPerms once()
-    (unauthPerms.take: () => Boolean) expects() returning true once()
-    (unauthPerms.take: () => Boolean) expects() returning false once()
+    unauthPerms.take _ expects() returning true once()
+    unauthPerms.take _ expects() returning false once()
 
     slaService.getSlaByToken _ expects userToken returning Future.never once()
 
